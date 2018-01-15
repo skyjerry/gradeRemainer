@@ -19,7 +19,7 @@ class remindGrade extends Command
      *
      * @var string
      */
-    protected $signature = 'grade:remind';
+    protected $signature = 'grade:remind {option?} {--student_id=}';
 
     /**
      * The console command description.
@@ -41,6 +41,17 @@ class remindGrade extends Command
 
     public function handle()
     {
+        $option = $this->argument('option');
+        $student_id = $this->argument('student_id');
+        if ($option == 'init')
+        {
+            $users = new Users();
+            $user = $users->where('student_id', $student_id)->first();
+            $grade = $this->getGrade($student_id, $user->password, $user->name);
+            $user->update('grade', json_encode($grade));
+            exit(0);
+        }
+
 //        $users = new Users();
 //        $users = $users->all();
 //
@@ -92,6 +103,8 @@ class remindGrade extends Command
         }
         return $grades;
     }
+
+
 
     private function sendSMS(string $phone, string $name, string $update)
     {
