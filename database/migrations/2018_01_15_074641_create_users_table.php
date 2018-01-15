@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('name');
             $table->string('phone')->index();
-            $table->json('grade');
+            $table->string('grade');
             $table->timestamps();
         });
     }
