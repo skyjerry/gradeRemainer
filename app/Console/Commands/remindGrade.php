@@ -56,28 +56,28 @@ class remindGrade extends Command
             exit(0);
         }
 
-//        $users = new Users();
-//        $users = $users->all();
-//
-//        foreach ($users as $user) {
-//            $db_grade = json_decode($user->grade, true);
-//            $remote_grade = $this->getGrade($user->student_id, $user->password, $user->name);
-//            $diff_arr = array_diff_assoc($db_grade, $remote_grade);
-//
-//            if (!empty($diff_arr)) {
-//                $str = '';
-//                foreach ($diff_arr as $key => $value) {
-//                    $str .= $key.':'.$value.',';
-//                }
-//                $update = substr($str,0,strlen($str)-1);
-//
-//                $this->sendSMS($user->phone, $user->name, $update);
-//            }
-//        }
         $users = new Users();
-        $user = $users->where('student_id', '20152203085')->first();
-        $user->name = $user->name.'1';
-        $user->save();
+        $users = $users->all();
+
+        foreach ($users as $user) {
+            $db_grade = json_decode($user->grade, true);
+            $remote_grade = $this->getGrade($user->student_id, $user->password, $user->name);
+            $diff_arr = array_diff_assoc($db_grade, $remote_grade);
+
+            if (!empty($diff_arr)) {
+                $str = '';
+                foreach ($diff_arr as $key => $value) {
+                    $str .= $key.':'.$value.',';
+                }
+                $update = substr($str,0,strlen($str)-1);
+
+                $this->sendSMS($user->phone, $user->name, $update);
+            }
+        }
+//        $users = new Users();
+//        $user = $users->where('student_id', '20152203085')->first();
+//        $user->name = $user->name.'1';
+//        $user->save();
 
     }
     private function getGrade($student_id, $password, $name)
