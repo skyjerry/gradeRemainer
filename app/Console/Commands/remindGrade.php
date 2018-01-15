@@ -6,6 +6,7 @@ use App\Model\Users;
 use App\User;
 use GuzzleHttp\Cookie\CookieJar;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Overtrue\EasySms\Exceptions\NoGatewayAvailableException;
 use QL\QueryList;
 use Overtrue\EasySms\EasySms;
@@ -42,13 +43,16 @@ class remindGrade extends Command
     public function handle()
     {
         $option = $this->argument('option');
-        $student_id = $this->argument('student_id');
+        $student_id = $this->option('student_id');
         if ($option == 'init')
         {
             $users = new Users();
             $user = $users->where('student_id', $student_id)->first();
             $grade = $this->getGrade($student_id, $user->password, $user->name);
-            $user->update('grade', json_encode($grade));
+
+            $user->grade = json_encode($grade);
+            $user->save();
+
             exit(0);
         }
 
@@ -83,11 +87,13 @@ class remindGrade extends Command
         $jar = new CookieJar();
 
         $ql->get(self::URL,[],[
-            'cookies' => $jar
+            'cookies' => $jar,
+            'timeout' => 5
         ]);
         $post_field = 'oper=login&xh='.$student_id.'&xm='.$name.'&mm='.$password.'&button=%E6%9F%A5++%E8%AF%A2';
         $ql->post(self::URL_POST,$post_field,[
-            'cookies' => $jar
+            'cookies' => $jar,
+            'timeout' => 5
         ]);
 
         $str = $ql->getHtml();
