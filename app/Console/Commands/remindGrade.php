@@ -62,7 +62,7 @@ class remindGrade extends Command
         foreach ($users as $user) {
             $db_grade = json_decode($user->grade, true);
             $remote_grade = $this->getGrade($user->student_id, $user->password, $user->name);
-            $diff_arr = array_diff_assoc($db_grade, $remote_grade);
+            $diff_arr = array_diff_assoc($remote_grade, $db_grade);
 
             if (!empty($diff_arr)) {
                 $str = '';
