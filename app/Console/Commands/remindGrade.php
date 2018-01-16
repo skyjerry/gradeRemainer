@@ -69,15 +69,13 @@ class remindGrade extends Command
                 foreach ($diff_arr as $key => $value) {
                     $str .= $key.':'.$value.',';
                 }
-                $update = substr($str,0,strlen($str)-1);
 
+                $update = substr($str,0,strlen($str)-1);
+                $user->grade = json_encode($remote_grade);
+                $user->save();
                 $this->sendSMS($user->phone, $user->name, $update);
             }
         }
-//        $users = new Users();
-//        $user = $users->where('student_id', '20152203085')->first();
-//        $user->name = $user->name.'1';
-//        $user->save();
 
     }
     private function getGrade($student_id, $password, $name)
@@ -114,7 +112,7 @@ class remindGrade extends Command
 
     private function sendSMS(string $phone, string $name, string $update)
     {
-        if (strlen($update)>=20)
+        if (mb_strlen($update, 'UTF-8')>=20)
         {
             $update = '数据过长，请在微信公众号内查看';
         }
